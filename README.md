@@ -1,5 +1,7 @@
 # boxcli
 
+[![Documentation Status](https://readthedocs.org/projects/boxcli/badge/?version=latest)](https://boxcli.readthedocs.io/en/latest/?badge=latest)
+
 Create simple and beautiful boxes in the terminal.
 
 ## Installation
@@ -29,6 +31,8 @@ box = factory.get_box("This is the title of the box", "This is the content of th
 # Print it! as easy as that.
 print(box)
 ```
+
+In-depth documentation can be found [here](http://boxcli.rtfd.io/).
 
 ## Contributing
 
