@@ -1,6 +1,7 @@
 # boxcli
 
 [![Documentation Status](https://readthedocs.org/projects/boxcli/badge/?version=latest)](https://boxcli.readthedocs.io/en/latest/?badge=latest)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d3240b45af6d44c4821aa5b73f4b478b)](https://www.codacy.com/manual/anishjewalikar/boxcli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NightShade256/boxcli&amp;utm_campaign=Badge_Grade)
 
 Create simple and beautiful boxes in the terminal.
 
