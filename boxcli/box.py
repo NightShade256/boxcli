@@ -64,7 +64,6 @@ class BoxStyles(enum.Enum):
 
     Attributes
     ----------
-
     CLASSIC : BoxStyles
         The classic box style, with plus signs at the corners
         and dashes as the separators.
@@ -366,7 +365,7 @@ class BoxFactory:
             The horizontal padding.
         Py : int
             The vertical padding.
-        style : Union[BoxStyles, RawStyle] 
+        style : Union[BoxStyles, RawStyle]
             The style used to construct boxes
         alignment : ContentAlignment
             The alignment of the content and title.
