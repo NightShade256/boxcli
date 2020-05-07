@@ -1,7 +1,7 @@
 import enum
 import typing
 
-from .errors import *
+from .errors import TitleLengthError, TitlePositionError, DifferentLengthError
 from .styles import alignments, box_types
 
 __all__ = [
@@ -10,6 +10,49 @@ __all__ = [
     "TitlePosition",
     "BoxFactory"
 ]
+
+def _longest_line(lines: typing.List[str]) -> int:
+    """Returns the length of the longest line.
+
+    Arguments
+    ---------
+    lines : list[str]
+        A list of lines
+
+    Returns
+    -------
+    int
+        The length of the longest line."""
+
+    longest = 0
+    for line in lines:
+        if len(line) > longest:
+            longest = len(line)
+    return longest
+
+def repeat_with_string(c: str, s: str, n: int) -> str:
+    """Returns the title of the box with separators.
+
+    This is only called when the title position is
+    TitlePosition.TOP or TitlePosition.BOTTOM
+
+    Arguments
+    ---------
+    c : str
+        The separator
+    s : str
+        The title of the box
+    n : int
+        Computed width of the box.
+
+    Returns
+    -------
+    str
+        The title of the box with appended separators."""
+
+    count = n - len(s) - 2
+    bar = c * count
+    return f" {s} {bar}"
 
 
 class BoxType(enum.Enum):
@@ -39,7 +82,8 @@ class BoxType(enum.Enum):
     SINGLE_DOUBLE : BoxType
         The single double box style.
     DOUBLE_SINGLE : BoxType
-        The double single box style."""
+        The double single box style.
+    """
 
     CLASSIC = 1
     INVISIBLE = 2
@@ -64,7 +108,8 @@ class ContentAlignment(enum.Enum):
     LEFT : ContentAligment
         Left-sided alignment.
     RIGHT : ContentAlignment
-        Right-sided alignment."""
+        Right-sided alignment.
+    """
 
     CENTRE = 1
     LEFT = 2
@@ -84,7 +129,8 @@ class TitlePosition(enum.Enum):
     TOP : TitlePosition
         The title position on top of the box.
     BOTTOM : TitlePosition
-        The title position underneath the box."""
+        The title position underneath the box.
+    """
 
     INSIDE = 1
     TOP = 2
@@ -112,7 +158,8 @@ class BoxFactory:
         Defaults to ContentAlignment.CENTRE
     title_pos : TitlePosition, optional
         The position of the title with respect to the box.
-        Defaults to TitlePosition.INSIDE"""
+        Defaults to TitlePosition.INSIDE
+    """
 
     def __init__(self, Px: int, Py: int, box_type: BoxType, **kwargs):
         """The constructor nothing to explain here :P"""
@@ -123,49 +170,6 @@ class BoxFactory:
         self._parts = box_types.get(self.type.value)
         self.alignment = kwargs.get("alignment", ContentAlignment.CENTRE)
         self.title_position = kwargs.get("title_pos", TitlePosition.INSIDE)
-
-    def _longest_line(self, lines: typing.List[str]) -> int:
-        """Returns the length of the longest line.
-
-        Arguments
-        ---------
-        lines : list[str]
-            A list of lines
-
-        Returns
-        -------
-        int
-            The length of the longest line."""
-
-        longest = 0
-        for line in lines:
-            if len(line) > longest:
-                longest = len(line)
-        return longest
-
-    def _repeat_with_string(self, c: str, s: str, n: int) -> str:
-        """Returns the title of the box with separators.
-
-        This is only called when the title position is
-        TitlePosition.TOP or TitlePosition.BOTTOM
-
-        Arguments
-        ---------
-        c : str
-            The separator
-        s : str
-            The title of the box
-        n : int
-            Computed width of the box.
-
-        Returns
-        -------
-        str
-            The title of the box with appended separators."""
-
-        count = n - len(s) - 2
-        bar = c * count
-        return f" {s} {bar}"
 
     def _add_vert_padding(self, length: int) -> list:
         """Returns a list of lines with vertical separators.
@@ -182,7 +186,8 @@ class BoxFactory:
         -------
         list[str]
             Lines equvivalent in number to the vertical padding,
-            with end separators."""
+            with end separators.
+        """
 
         # Here note that the two we subtract corresponds to the
         # end separators.
@@ -219,13 +224,13 @@ class BoxFactory:
             length of the largest line in the content.
         DifferentLengthError
             If the length of the top bar is not equal to the
-            length of the bottom bar."""
-
+            length of the bottom bar.
+        """
         # side_margin here refers to the horizontal padding.
         side_margin = " " * self.Px
 
         # compute the longest line
-        longest_line = self._longest_line(content.splitlines())
+        longest_line = _longest_line(content.splitlines())
 
         lines = []
 
@@ -255,7 +260,7 @@ class BoxFactory:
         # Update the bars if the position of the title is other than
         # that of inside the box.
         if self.title_position != TitlePosition.INSIDE:
-            title_bar = self._repeat_with_string(
+            title_bar = repeat_with_string(
                 self._parts["horizontal"], title, n-2)
             if self.title_position == TitlePosition.TOP:
                 top_bar = (self._parts["top_left"]
@@ -282,8 +287,8 @@ class BoxFactory:
 
         # This loop only really executes when the title is inside the box.
         # This renders the title lines and appends them to the texts list.
-        for i in range(len(lines)):
-            length = len(lines[i])
+        for item in lines:
+            length = len(item)
 
             # Odd space is the space that needs to be added in a line if
             # difference in the length of the current line and the longest
@@ -303,7 +308,7 @@ class BoxFactory:
             fmt_string = alignments[self.alignment.value]
             box_string = fmt_string.format(sep=self._parts["vertical"],
                                            sp=spacing,
-                                           ln=lines[i],
+                                           ln=item,
                                            os=odd_space,
                                            s=space,
                                            px=side_margin)
@@ -314,8 +319,8 @@ class BoxFactory:
         # This loop is similar to the one above, except
         # that it renders the content lines as opposed to that
         # of the title.
-        for i in range(len(content_lines)):
-            length = len(content_lines[i])
+        for item in content_lines:
+            length = len(item)
 
             space, odd_space = "", ""
 
@@ -330,7 +335,7 @@ class BoxFactory:
             fmt_string = alignments[self.alignment.value]
             box_string = fmt_string.format(sep=self._parts["vertical"],
                                            sp=spacing,
-                                           ln=content_lines[i],
+                                           ln=item,
                                            os=odd_space,
                                            s=space,
                                            px=side_margin)
@@ -362,8 +367,8 @@ class BoxFactory:
         alignment : ContentAlignment
             The alignment of the content and title.
         title_pos : TitlePosition
-            The position of the title relative to the box."""
-
+            The position of the title relative to the box.
+        """
         self.Px = kwargs.get("Px", self.Px)
         self.Py = kwargs.get("Py", self.Py)
         self.type = kwargs.get("box_type", self.type)

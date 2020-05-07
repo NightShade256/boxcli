@@ -4,8 +4,31 @@ Create simple and beautiful boxes in the terminal.
 
 ## Installation
 
-The method of installation is through pip.
-This section will be updated.
+The preferred method of installation is through pip.
+
+Just execute,
+`pip install -U boxcli`
+
+That will install boxcli, or if you already have boxcli it will update it to the latest version,
+pretty neat right?
+
+## Usage
+
+You can use boxcli in your application very easily.
+Here is an example:
+
+```python
+import boxcli
+
+# Create a box factory.
+factory = boxcli.BoxFactory(20, 5, boxcli.BoxType.ROUND)
+
+# Create a box.
+box = factory.get_box("This is the title of the box", "This is the content of the box")
+
+# Print it! as easy as that.
+print(box)
+```
 
 ## Contributing
 
@@ -14,7 +37,7 @@ Pull requests are welcome!
 ## Acknowledgements
 
 This package is a port of the package [box-cli-maker](https://github.com/Delta456/box-cli-maker) written by
-@Delta456 in Go.
+[@Delta456](https://github.com/Delta456) in Go.
 
 ## License
 

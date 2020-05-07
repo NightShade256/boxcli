@@ -1,6 +1,4 @@
-"""
-A CLI Box maker in Python.
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""A CLI Box maker in Python.
 
 This library can be used to create simple and beautiful
 boxes in the terminal with ease.

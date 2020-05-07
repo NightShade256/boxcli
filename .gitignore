@@ -1,3 +1,4 @@
 dist
 build
 boxcli.egg-info
+__pycache__
