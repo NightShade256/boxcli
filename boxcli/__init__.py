@@ -10,18 +10,20 @@ boxes in the terminal with ease.
 
 from .box import *
 from .errors import *
+from .styles import *
 
 __all__ = [
     "BoxFactory",
-    "BoxType",
+    "BoxStyles",
     "TitlePosition",
     "ContentAlignment",
     "TitlePositionError",
     "TitleLengthError",
-    "DifferentLengthError"
+    "DifferentLengthError",
+    "RawStyle"
 ]
 
 __title__ = "boxcli"
 __author__ = "Anish Jewalikar"
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __license__ = "MIT"

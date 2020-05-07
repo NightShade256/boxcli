@@ -16,11 +16,16 @@ whose objects can create boxes through the `get_box`
 Enums
 ------
 
-.. autoclass:: boxcli.BoxType
+.. autoclass:: boxcli.BoxStyles
 
 .. autoclass:: boxcli.ContentAlignment
 
 .. autoclass:: boxcli.TitlePosition
+
+Custom Styles
+--------------
+
+.. autoclass:: boxcli.RawStyle
 
 Exceptions
 -----------

@@ -5,7 +5,7 @@ with open("README.md") as fp:
 
 setuptools.setup(
     name="boxcli",
-    version="1.1.0",
+    version="1.2.0",
     author="Anish Jewalikar",
     author_email="anishjewalikar@gmail.com",
     description="Create simple and beautiful boxes in the terminal.",

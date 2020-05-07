@@ -1,17 +1,18 @@
 import enum
-import typing
+from typing import Union, List
 
 from .errors import TitleLengthError, TitlePositionError, DifferentLengthError
-from .styles import alignments, box_types
+from .styles import alignments, default_styles, RawStyle
 
 __all__ = [
-    "BoxType",
+    "BoxStyles",
     "ContentAlignment",
     "TitlePosition",
     "BoxFactory"
 ]
 
-def _longest_line(lines: typing.List[str]) -> int:
+
+def _longest_line(lines: List[str]) -> int:
     """Returns the length of the longest line.
 
     Arguments
@@ -29,6 +30,7 @@ def _longest_line(lines: typing.List[str]) -> int:
         if len(line) > longest:
             longest = len(line)
     return longest
+
 
 def repeat_with_string(c: str, s: str, n: int) -> str:
     """Returns the title of the box with separators.
@@ -55,33 +57,33 @@ def repeat_with_string(c: str, s: str, n: int) -> str:
     return f" {s} {bar}"
 
 
-class BoxType(enum.Enum):
-    """BoxType enumeration, to be used to specify the box style.
+class BoxStyles(enum.Enum):
+    """BoxStyle enumeration, to be used to specify the box style.
 
     To see the box styles for yourself please go to the project README.
 
     Attributes
     ----------
 
-    CLASSIC : BoxType
+    CLASSIC : BoxStyles
         The classic box style, with plus signs at the corners
         and dashes as the separators.
-    INVISIBLE : BoxType
+    INVISIBLE : BoxStyles
         The invisible box style, with plus signs at the corners
         but no box outline separators.
-    BOLD : BoxType
+    BOLD : BoxStyles
         The bold box style.
-    ROUND : BoxType
+    ROUND : BoxStyles
         The round box style, with rounded edges.
-    SINGLE : BoxType
+    SINGLE : BoxStyles
         The single box style.
-    DOUBLE : BoxType
+    DOUBLE : BoxStyles
         The double box style, similar to the single box style
         but has two lines in the separators and corners instead
         of single line.
-    SINGLE_DOUBLE : BoxType
+    SINGLE_DOUBLE : BoxStyles
         The single double box style.
-    DOUBLE_SINGLE : BoxType
+    DOUBLE_SINGLE : BoxStyles
         The double single box style.
     """
 
@@ -148,8 +150,10 @@ class BoxFactory:
         Horizontal padding.
     Py : int
         Vertical padding.
-    box_type : BoxType
+    style : Union[BoxStyles, RawStyle]
         The style used to construct boxes.
+        You can pass in a BoxStyles enum for builtin styles.
+        or use boxcli.RawStyle to specify a custom one.
 
     Keyword Arguments
     -----------------
@@ -161,13 +165,14 @@ class BoxFactory:
         Defaults to TitlePosition.INSIDE
     """
 
-    def __init__(self, Px: int, Py: int, box_type: BoxType, **kwargs):
-        """The constructor nothing to explain here :P"""
-
+    def __init__(self, Px: int, Py: int, style: Union[BoxStyles, RawStyle], **kwargs):
+        """The constructor nothing to explain here."""
         self.Px = Px
         self.Py = Py
-        self.type = box_type
-        self._parts = box_types.get(self.type.value)
+        if isinstance(style, BoxStyles):
+            self.style = default_styles.get(style.value)
+        else:
+            self.style = style
         self.alignment = kwargs.get("alignment", ContentAlignment.CENTRE)
         self.title_position = kwargs.get("title_pos", TitlePosition.INSIDE)
 
@@ -188,12 +193,11 @@ class BoxFactory:
             Lines equvivalent in number to the vertical padding,
             with end separators.
         """
-
         # Here note that the two we subtract corresponds to the
         # end separators.
         padding = " " * (length - 2)
         lines = []
-        sep = self._parts["vertical"]
+        sep = self.style.vertical
         for _ in range(self.Py):
             lines.append(sep + padding + sep)
         return lines
@@ -251,25 +255,25 @@ class BoxFactory:
             raise TitleLengthError()
 
         # Create temporary top and bottom bars.
-        bar = self._parts["horizontal"] * (n-2)
-        top_bar = self._parts["top_left"] + bar + self._parts["top_right"]
-        bottom_bar = (self._parts["bottom_left"]
+        bar = self.style.horizontal * (n-2)
+        top_bar = self.style.top_left + bar + self.style.top_right
+        bottom_bar = (self.style.bottom_left
                       + bar
-                      + self._parts["bottom_right"])
+                      + self.style.bottom_right)
 
         # Update the bars if the position of the title is other than
         # that of inside the box.
         if self.title_position != TitlePosition.INSIDE:
             title_bar = repeat_with_string(
-                self._parts["horizontal"], title, n-2)
+                self.style.horizontal, title, n-2)
             if self.title_position == TitlePosition.TOP:
-                top_bar = (self._parts["top_left"]
+                top_bar = (self.style.top_left
                            + title_bar
-                           + self._parts["top_right"])
+                           + self.style.top_right)
             elif self.title_position == TitlePosition.BOTTOM:
-                bottom_bar = (self._parts["bottom_left"]
+                bottom_bar = (self.style.bottom_left
                               + title_bar
-                              + self._parts["bottom_right"])
+                              + self.style.bottom_right)
 
         # Check if the length of the top and bottom bars match
         # if the title is inside the box.
@@ -306,7 +310,7 @@ class BoxFactory:
             # 'Render' the line using the format function.
             spacing = str(space) + str(side_margin)
             fmt_string = alignments[self.alignment.value]
-            box_string = fmt_string.format(sep=self._parts["vertical"],
+            box_string = fmt_string.format(sep=self.style.vertical,
                                            sp=spacing,
                                            ln=item,
                                            os=odd_space,
@@ -333,7 +337,7 @@ class BoxFactory:
 
             spacing = str(space) + str(side_margin)
             fmt_string = alignments[self.alignment.value]
-            box_string = fmt_string.format(sep=self._parts["vertical"],
+            box_string = fmt_string.format(sep=self.style.vertical,
                                            sp=spacing,
                                            ln=item,
                                            os=odd_space,
@@ -362,7 +366,7 @@ class BoxFactory:
             The horizontal padding.
         Py : int
             The vertical padding.
-        box_type : BoxType
+        style : Union[BoxStyles, RawStyle] 
             The style used to construct boxes
         alignment : ContentAlignment
             The alignment of the content and title.
@@ -371,7 +375,10 @@ class BoxFactory:
         """
         self.Px = kwargs.get("Px", self.Px)
         self.Py = kwargs.get("Py", self.Py)
-        self.type = kwargs.get("box_type", self.type)
-        self._parts = box_types[self.type.value]
+        style_temp = kwargs.get("style", self.style)
+        if isinstance(style_temp, BoxStyles):
+            self.style = default_styles.get(style_temp)
+        else:
+            self.style = style_temp
         self.alignment = kwargs.get("alignment", self.alignment)
         self.title_position = kwargs.get("title_pos", self.title_position)
