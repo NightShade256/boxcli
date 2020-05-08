@@ -24,7 +24,7 @@ Here is an example:
 import boxcli
 
 # Create a box factory.
-factory = boxcli.BoxFactory(20, 5, boxcli.BoxType.ROUND)
+factory = boxcli.BoxFactory(20, 5, boxcli.BoxStyles.ROUND)
 
 # Create a box.
 box = factory.get_box("This is the title of the box", "This is the content of the box")
