@@ -286,10 +286,10 @@ class BoxFactory:
         texts = self._add_vert_padding(n)
 
         # This just splits the content in its constituent lines.
-        content_lines = content.splitlines()
+        # and appends them to the lines list.
+        lines.extend(content.splitlines())
 
-        # This loop only really executes when the title is inside the box.
-        # This renders the title lines and appends them to the texts list.
+        # This loop renders the title and the content.
         for item in lines:
             length = len(item)
 
@@ -317,31 +317,6 @@ class BoxFactory:
                                            px=side_margin)
 
             # Add the line to our list of lines.
-            texts.append(box_string)
-
-        # This loop is similar to the one above, except
-        # that it renders the content lines as opposed to that
-        # of the title.
-        for item in content_lines:
-            length = len(item)
-
-            space, odd_space = "", ""
-
-            if length < longest_line:
-                diff = longest_line - length
-                to_add = diff / 2
-                space = " " * int(to_add)
-                if diff % 2 != 0:
-                    odd_space = " "
-
-            spacing = str(space) + str(side_margin)
-            fmt_string = alignments[self.alignment.value]
-            box_string = fmt_string.format(sep=self.style.vertical,
-                                           sp=spacing,
-                                           ln=item,
-                                           os=odd_space,
-                                           s=space,
-                                           px=side_margin)
             texts.append(box_string)
 
         # The padding here is added to maintain symmetry of the
