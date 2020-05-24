@@ -6,17 +6,19 @@ boxcli documentation
 BoxFactory
 -----------
 
-The library has a main class called boxcli.BoxFactory
-whose objects can create boxes through the `get_box`
-
+The BoxFactory class can be used to create boxes with a set style.
+This style can be updated later on so that you don't have to create
+multiple instances of this class.
 
 .. autoclass:: boxcli.BoxFactory
     :members:
 
-Enums
-------
+Enumerations
+-------------
 
 .. autoclass:: boxcli.BoxStyles
+
+.. autoclass:: boxcli.ColourEnum
 
 .. autoclass:: boxcli.ContentAlignment
 
@@ -30,8 +32,8 @@ Custom Styles
 Exceptions
 -----------
 
-.. autoexception:: boxcli.TitlePositionError
+.. autoexception:: boxcli.DifferentLengthError
 
 .. autoexception:: boxcli.TitleLengthError
 
-.. autoexception:: boxcli.DifferentLengthError
+.. autoexception:: boxcli.TitlePositionError

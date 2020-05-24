@@ -1,15 +1,13 @@
 import enum
-from typing import Union, List
+from typing import List, Union
 
-from .errors import TitleLengthError, TitlePositionError, DifferentLengthError
-from .styles import alignments, default_styles, RawStyle
+import grapheme
+from colorama import Fore
 
-__all__ = [
-    "BoxStyles",
-    "ContentAlignment",
-    "TitlePosition",
-    "BoxFactory"
-]
+from .errors import DifferentLengthError, TitleLengthError, TitlePositionError
+from .styles import RawStyle, alignments, colours_list, default_styles
+
+__all__ = ["BoxStyles", "ContentAlignment", "TitlePosition", "BoxFactory", "ColourEnum"]
 
 
 def _longest_line(lines: List[str]) -> int:
@@ -27,34 +25,9 @@ def _longest_line(lines: List[str]) -> int:
 
     longest = 0
     for line in lines:
-        if len(line) > longest:
-            longest = len(line)
+        if grapheme.length(line) > longest:
+            longest = grapheme.length(line)
     return longest
-
-
-def repeat_with_string(c: str, s: str, n: int) -> str:
-    """Returns the title of the box with separators.
-
-    This is only called when the title position is
-    TitlePosition.TOP or TitlePosition.BOTTOM
-
-    Arguments
-    ---------
-    c : str
-        The separator
-    s : str
-        The title of the box
-    n : int
-        Computed width of the box.
-
-    Returns
-    -------
-    str
-        The title of the box with appended separators."""
-
-    count = n - len(s) - 2
-    bar = c * count
-    return f" {s} {bar}"
 
 
 class BoxStyles(enum.Enum):
@@ -138,6 +111,39 @@ class TitlePosition(enum.Enum):
     BOTTOM = 3
 
 
+class ColourEnum(enum.Enum):
+    """The colour enumeration, can be used to specify colour of box border.
+
+    Attributes
+    -----------
+    BLACK : ColourEnum
+        Black Colour.
+    RED : ColourEnum
+        Red Colour.
+    GREEN : ColourEnum
+        Green Colour.
+    BLUE : ColourEnum
+        Blue Colour.
+    CYAN : ColourEnum
+        Cyan Colour.
+    MAGENTA : ColourEnum
+        Magenta Colour.
+    YELLOW : ColourEnum
+        Yellow Colour.
+    WHITE : ColourEnum
+        White Colour.
+    """
+
+    BLACK = 1
+    RED = 2
+    GREEN = 3
+    BLUE = 4
+    CYAN = 5
+    MAGENTA = 6
+    YELLOW = 7
+    WHITE = 8
+
+
 class BoxFactory:
     """Represents a Box factory.
 
@@ -156,12 +162,15 @@ class BoxFactory:
 
     Keyword Arguments
     -----------------
-    alignment : ContentAlignment, optional
+    alignment : ContentAlignment
         The alignment used to construct boxes.
         Defaults to ContentAlignment.CENTRE
-    title_pos : TitlePosition, optional
+    title_pos : TitlePosition
         The position of the title with respect to the box.
         Defaults to TitlePosition.INSIDE
+    colour : ColourEnum
+        The colour to be used to construct the box border.
+        Defaults to None.
     """
 
     def __init__(self, Px: int, Py: int, style: Union[BoxStyles, RawStyle], **kwargs):
@@ -174,6 +183,9 @@ class BoxFactory:
             self.style = style
         self.alignment = kwargs.get("alignment", ContentAlignment.CENTRE)
         self.title_position = kwargs.get("title_pos", TitlePosition.INSIDE)
+        self.colour = kwargs.get("colour", None)
+        if self.colour is not None:
+            self.colour = colours_list.get(self.colour.value)
 
     def _add_vert_padding(self, length: int) -> list:
         """Returns a list of lines with vertical separators.
@@ -196,10 +208,40 @@ class BoxFactory:
         # end separators.
         padding = " " * (length - 2)
         lines = []
-        sep = self.style.vertical
+        if self.colour is not None:
+            sep = f"{self.colour}{self.style.vertical}{Fore.RESET}"
+        else:
+            sep = self.style.vertical
         for _ in range(self.Py):
             lines.append(sep + padding + sep)
         return lines
+
+    def repeat_with_string(self, c: str, s: str, n: int) -> str:
+        """Returns the title of the box with separators.
+
+        This is only called when the title position is
+        TitlePosition.TOP or TitlePosition.BOTTOM
+
+        Arguments
+        ---------
+        c : str
+            The separator
+        s : str
+            The title of the box
+        n : int
+            Computed width of the box.
+
+        Returns
+        -------
+        str
+            The title of the box with appended separators."""
+
+        count = n - grapheme.length(s) - 2
+        if self.colour is not None:
+            bar = f"{self.colour}{c * count}{Fore.RESET}"
+        else:
+            bar = c * count
+        return f" {s} {bar}"
 
     def get_box(self, title: str, content: str) -> str:
         """Returns a rendered box in the form of a string.
@@ -250,33 +292,49 @@ class BoxFactory:
             if self.title_position == TitlePosition.INSIDE:
                 lines.extend(title.splitlines())
                 lines.append("")
-        if self.title_position != TitlePosition.INSIDE and len(title) > n-2:
+        if (
+            self.title_position != TitlePosition.INSIDE
+            and grapheme.length(title) > n - 2
+        ):
             raise TitleLengthError()
 
         # Create temporary top and bottom bars.
-        bar = self.style.horizontal * (n-2)
+        bar = self.style.horizontal * (n - 2)
         top_bar = self.style.top_left + bar + self.style.top_right
-        bottom_bar = (self.style.bottom_left
-                      + bar
-                      + self.style.bottom_right)
+        bottom_bar = self.style.bottom_left + bar + self.style.bottom_right
+
+        if self.colour is not None:
+            top_bar = f"{self.colour}{top_bar}{Fore.RESET}"
+            bottom_bar = f"{self.colour}{bottom_bar}{Fore.RESET}"
 
         # Update the bars if the position of the title is other than
         # that of inside the box.
         if self.title_position != TitlePosition.INSIDE:
-            title_bar = repeat_with_string(
-                self.style.horizontal, title, n-2)
+            title_bar = self.repeat_with_string(self.style.horizontal, title, n - 2)
             if self.title_position == TitlePosition.TOP:
-                top_bar = (self.style.top_left
-                           + title_bar
-                           + self.style.top_right)
+                if self.colour is not None:
+                    top_bar = (
+                        f"{self.colour}{self.style.top_left}{Fore.RESET}"
+                        + title_bar
+                        + f"{self.colour}{self.style.top_right}{Fore.RESET}"
+                    )
+                else:
+                    top_bar = self.style.top_left + title_bar + self.style.top_right
             elif self.title_position == TitlePosition.BOTTOM:
-                bottom_bar = (self.style.bottom_left
-                              + title_bar
-                              + self.style.bottom_right)
+                if self.colour is not None:
+                    bottom_bar = (
+                        f"{self.colour}{self.style.bottom_left}{Fore.RESET}"
+                        + title_bar
+                        + f"{self.colour}{self.style.bottom_right}{Fore.RESET}"
+                    )
+                else:
+                    bottom_bar = (
+                        self.style.bottom_left + title_bar + self.style.bottom_right
+                    )
 
         # Check if the length of the top and bottom bars match
         # if the title is inside the box.
-        temp_cond = len(top_bar) != len(bottom_bar)
+        temp_cond = grapheme.length(top_bar) != grapheme.length(bottom_bar)
         if self.title_position == TitlePosition.INSIDE and temp_cond:
             raise DifferentLengthError()
 
@@ -291,7 +349,7 @@ class BoxFactory:
 
         # This loop renders the title and the content.
         for item in lines:
-            length = len(item)
+            length = grapheme.length(item)
 
             # Odd space is the space that needs to be added in a line if
             # difference in the length of the current line and the longest
@@ -307,14 +365,15 @@ class BoxFactory:
                     odd_space = " "
 
             # 'Render' the line using the format function.
+            if self.colour is not None:
+                sep = f"{self.colour}{self.style.vertical}{Fore.RESET}"
+            else:
+                sep = self.style.vertical
             spacing = str(space) + str(side_margin)
             fmt_string = alignments[self.alignment.value]
-            box_string = fmt_string.format(sep=self.style.vertical,
-                                           sp=spacing,
-                                           ln=item,
-                                           os=odd_space,
-                                           s=space,
-                                           px=side_margin)
+            box_string = fmt_string.format(
+                sep=sep, sp=spacing, ln=item, os=odd_space, s=space, px=side_margin,
+            )
 
             # Add the line to our list of lines.
             texts.append(box_string)
@@ -346,6 +405,8 @@ class BoxFactory:
             The alignment of the content and title.
         title_pos : TitlePosition
             The position of the title relative to the box.
+        colour : ColourEnum
+            The colour of the box border.
         """
         self.Px = kwargs.get("Px", self.Px)
         self.Py = kwargs.get("Py", self.Py)
@@ -356,3 +417,6 @@ class BoxFactory:
             self.style = style_temp
         self.alignment = kwargs.get("alignment", self.alignment)
         self.title_position = kwargs.get("title_pos", self.title_position)
+        self.colour = kwargs.get("colour", self.colour)
+        if self.colour is not None:
+            self.colour = colours_list.get(self.colour.value)

@@ -7,7 +7,7 @@ boxes in the terminal with ease.
 """
 
 from .box import *
-from .errors import TitlePositionError, TitleLengthError, DifferentLengthError
+from .errors import DifferentLengthError, TitleLengthError, TitlePositionError
 from .styles import RawStyle
 
 __all__ = [
@@ -18,10 +18,11 @@ __all__ = [
     "TitlePositionError",
     "TitleLengthError",
     "DifferentLengthError",
-    "RawStyle"
+    "RawStyle",
+    "ColourEnum",
 ]
 
 __title__ = "boxcli"
 __author__ = "Anish Jewalikar"
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __license__ = "MIT"

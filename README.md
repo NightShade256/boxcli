@@ -15,6 +15,14 @@ Just execute,
 That will install boxcli, or if you already have boxcli it will update it to the latest version,
 pretty neat right?
 
+## Changelog
+
+### 1.4.0
+
+1. Added support for box border colouring.
+
+2. Added *limited* unicode character rendering support.
+
 ## Usage
 
 You can use boxcli in your application very easily.
@@ -33,7 +41,52 @@ box = factory.get_box("This is the title of the box", "This is the content of th
 print(box)
 ```
 
+With the 1.4.0 update of boxcli, you can now specify the colour of the box border too.
+
 In-depth documentation can be found [here](http://boxcli.rtfd.io/).
+
+## Features
+
+1. There are 8 different inbuilt box styles.
+
+2. Custom box styles support.
+
+3. Colour support for box border.
+
+4. *Limited* support for non-latin alphabet characters.
+
+5. Specify title positions and content aligment according to your need.
+
+## Note
+
+### Colour Support on Windows
+
+This package cannot be directly used to colour box borders on Windows.
+You have to use this code snippet to turn on that functionality:
+
+```python
+import colorama
+
+colorama.init()
+```
+
+### Unicode Characters Rendering Support
+
+Some shells especially Powershell and the good old Command Prompt do not support emoji rendering.
+This is not the problem of this package rather it is the problem of these shells.
+
+This package uses [alvinlindstam/grapheme](https://github.com/alvinlindstam/grapheme) package to count the number of graphemes
+in the title and content to correctly render the box.
+
+The latin alphabet, emojis, and more get correctly rendered, but the real problem arises when you consider
+the CJK characters (Chinese, Japanese, Korean).
+
+CJK characters are classified as naturally *wide* while the latin alphabet is mostly *narrow*.
+This means the CJK characters physically take more space when displayed than the latin characters.
+Hence, the rendering breaks.
+
+I personally don't know a simple fix to this problem, but if you do please, please let me know.
+You can find how to contact me [here](https://github.com/NightShade256/boxcli#support).
 
 ## Contributing
 
@@ -42,7 +95,7 @@ Pull requests are welcome!
 ## Acknowledgements
 
 This package is a port of the package [box-cli-maker](https://github.com/Delta456/box-cli-maker) written by
-[@Delta456](https://github.com/Delta456) in Go.
+[Delta456](https://github.com/Delta456) in Go.
 
 ## License
 

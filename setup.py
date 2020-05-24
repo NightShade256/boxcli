@@ -5,7 +5,7 @@ with open("README.md") as fp:
 
 setuptools.setup(
     name="boxcli",
-    version="1.3.0",
+    version="1.4.0",
     author="Anish Jewalikar",
     author_email="anishjewalikar@gmail.com",
     description="Create simple and beautiful boxes in the terminal.",
@@ -18,5 +18,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.8',
+    python_requires=">=3.8",
+    install_requires=["grapheme", "colorama"],
 )

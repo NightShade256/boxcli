@@ -1,6 +1,9 @@
+import colorama
+
+
 class RawStyle:
     """Represents the raw style of the box.
-    
+
     This can be used to specify a custom style.
     You need to pass in a dictionary with the keys,
     ``horizontal``, ``vertical``, ``top_left``, ``top_right``,
@@ -97,4 +100,15 @@ alignments = {
     1: "{sep}{sp}{ln}{os}{sp}{sep}",
     2: "{sep}{px}{ln}{os}{sp}{s}{sep}",
     3: "{sep}{s}{sp}{os}{ln}{px}{sep}"
+}
+
+colours_list = {
+    1: colorama.Fore.BLACK,
+    2: colorama.Fore.RED,
+    3: colorama.Fore.GREEN,
+    4: colorama.Fore.BLUE,
+    5: colorama.Fore.CYAN,
+    6: colorama.Fore.MAGENTA,
+    7: colorama.Fore.YELLOW,
+    8: colorama.Fore.WHITE
 }
