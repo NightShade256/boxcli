@@ -216,7 +216,7 @@ class BoxFactory:
             lines.append(sep + padding + sep)
         return lines
 
-    def repeat_with_string(self, c: str, s: str, n: int) -> str:
+    def _repeat_with_string(self, c: str, s: str, n: int) -> str:
         """Returns the title of the box with separators.
 
         This is only called when the title position is
@@ -310,7 +310,7 @@ class BoxFactory:
         # Update the bars if the position of the title is other than
         # that of inside the box.
         if self.title_position != TitlePosition.INSIDE:
-            title_bar = self.repeat_with_string(self.style.horizontal, title, n - 2)
+            title_bar = self._repeat_with_string(self.style.horizontal, title, n - 2)
             if self.title_position == TitlePosition.TOP:
                 if self.colour is not None:
                     top_bar = (
