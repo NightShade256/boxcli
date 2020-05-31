@@ -1,8 +1,8 @@
 import enum
 from typing import List, Union
 
-import grapheme
 from colorama import Fore
+from wcwidth import wcswidth
 
 from .errors import DifferentLengthError, TitleLengthError, TitlePositionError
 from .styles import RawStyle, alignments, colours_list, default_styles
@@ -25,8 +25,8 @@ def _longest_line(lines: List[str]) -> int:
 
     longest = 0
     for line in lines:
-        if grapheme.length(line) > longest:
-            longest = grapheme.length(line)
+        if wcswidth(line) > longest:
+            longest = wcswidth(line)
     return longest
 
 
@@ -236,7 +236,7 @@ class BoxFactory:
         str
             The title of the box with appended separators."""
 
-        count = n - grapheme.length(s) - 2
+        count = n - wcswidth(s) - 2
         if self.colour is not None:
             bar = f"{self.colour}{c * count}{Fore.RESET}"
         else:
@@ -276,6 +276,9 @@ class BoxFactory:
 
         # compute the longest line
         longest_line = _longest_line(content.splitlines())
+        if self.title_position == TitlePosition.INSIDE:
+            if wcswidth(title) > longest_line:
+                longest_line = wcswidth(title)
 
         lines = []
 
@@ -285,18 +288,16 @@ class BoxFactory:
 
         # Check if the title is violating one of two things
         # 1) Title is outside the box and contains a new line.
-        # 2) Title is longer than the length of the longest line of content.
-        if title:
-            if self.title_position != TitlePosition.INSIDE and "\n" in title:
-                raise TitlePositionError()
-            if self.title_position == TitlePosition.INSIDE:
-                lines.extend(title.splitlines())
-                lines.append("")
-        if (
-            self.title_position != TitlePosition.INSIDE
-            and grapheme.length(title) > n - 2
-        ):
+        # 2) Title is longer than the length of the top and bottom bars.
+        if self.title_position != TitlePosition.INSIDE and "\n" in title:
+            raise TitlePositionError()
+
+        if self.title_position != TitlePosition.INSIDE and wcswidth(title) > n - 2:
             raise TitleLengthError()
+
+        if self.title_position == TitlePosition.INSIDE:
+            lines.extend(title.splitlines())
+            lines.append("")
 
         # Create temporary top and bottom bars.
         bar = self.style.horizontal * (n - 2)
@@ -334,7 +335,7 @@ class BoxFactory:
 
         # Check if the length of the top and bottom bars match
         # if the title is inside the box.
-        temp_cond = grapheme.length(top_bar) != grapheme.length(bottom_bar)
+        temp_cond = wcswidth(top_bar) != wcswidth(bottom_bar)
         if self.title_position == TitlePosition.INSIDE and temp_cond:
             raise DifferentLengthError()
 
@@ -349,7 +350,7 @@ class BoxFactory:
 
         # This loop renders the title and the content.
         for item in lines:
-            length = grapheme.length(item)
+            length = wcswidth(item)
 
             # Odd space is the space that needs to be added in a line if
             # difference in the length of the current line and the longest

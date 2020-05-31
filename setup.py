@@ -5,10 +5,11 @@ with open("README.md") as fp:
 
 setuptools.setup(
     name="boxcli",
-    version="1.4.0",
+    version="1.5.0",
     author="Anish Jewalikar",
     author_email="anishjewalikar@gmail.com",
     description="Create simple and beautiful boxes in the terminal.",
+    license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/NightShade256/boxcli",
@@ -19,5 +20,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.8",
-    install_requires=["grapheme", "colorama"],
+    install_requires=["wcwidth", "colorama"],
 )
