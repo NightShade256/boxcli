@@ -79,7 +79,7 @@ class ContentAlignment(enum.Enum):
     ----------
     CENTRE : ContentAlignment
         Centred alignment.
-    LEFT : ContentAligment
+    LEFT : ContentAlignment
         Left-sided alignment.
     RIGHT : ContentAlignment
         Right-sided alignment.
@@ -413,7 +413,7 @@ class BoxFactory:
         self.Py = kwargs.get("Py", self.Py)
         style_temp = kwargs.get("style", self.style)
         if isinstance(style_temp, BoxStyles):
-            self.style = default_styles.get(style_temp)
+            self.style = default_styles.get(style_temp.value)
         else:
             self.style = style_temp
         self.alignment = kwargs.get("alignment", self.alignment)

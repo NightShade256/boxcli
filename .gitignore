@@ -3,4 +3,3 @@ build
 boxcli.egg-info
 __pycache__
 .vscode
-test.py

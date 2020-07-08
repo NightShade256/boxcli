@@ -1,7 +1,7 @@
 # boxcli
 
 [![Documentation Status](https://readthedocs.org/projects/boxcli/badge/?version=latest)](https://boxcli.readthedocs.io/en/latest/?badge=latest)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d3240b45af6d44c4821aa5b73f4b478b)](https://www.codacy.com/manual/anishjewalikar/boxcli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NightShade256/boxcli&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d3240b45af6d44c4821aa5b73f4b478b)](https://www.codacy.com/manual/anishjewalikar/boxcli?utm_source=github.com&utm_medium=referral&utm_content=NightShade256/boxcli&utm_campaign=Badge_Grade)
 
 Create simple and beautiful boxes in the terminal.
 
@@ -17,10 +17,11 @@ pretty neat right?
 
 ## Changelog
 
-### 1.5.0
+### 1.5.1
 
-1. Added support for CJK characters. Now the package correctly renders the box's containing emojis, Latin characters,
-   CJK characters.
+1. Fixed a bug in the `update` method.
+
+2. Fixed a typo in the docs.
 
 ## Usage
 

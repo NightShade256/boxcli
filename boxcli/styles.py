@@ -29,77 +29,93 @@ class RawStyle:
 
 # builtin box styles.
 default_styles = {
-    1: RawStyle({
-        "top_right": "+",
-        "top_left": "+",
-        "bottom_right": "+",
-        "bottom_left": "+",
-        "horizontal": "-",
-        "vertical": "|",
-    }),
-    2: RawStyle({
-        "top_right": "+",
-        "top_left": "+",
-        "bottom_right": "+",
-        "bottom_left": "+",
-        "horizontal": " ",
-        "vertical": " ",
-    }),
-    3: RawStyle({
-        "top_right": "┓",
-        "top_left": "┏",
-        "bottom_right": "┛",
-        "bottom_left": "┗",
-        "horizontal": "━",
-        "vertical": "┃",
-    }),
-    4: RawStyle({
-        "top_right": "╮",
-        "top_left": "╭",
-        "bottom_right": "╯",
-        "bottom_left": "╰",
-        "horizontal": "─",
-        "vertical": "│",
-    }),
-    5: RawStyle({
-        "top_right": "┐",
-        "top_left": "┌",
-        "bottom_right": "┘",
-        "bottom_left": "└",
-        "horizontal": "─",
-        "vertical": "│",
-    }),
-    6: RawStyle({
-        "top_right": "╗",
-        "top_left": "╔",
-        "bottom_right": "╝",
-        "bottom_left": "╚",
-        "horizontal": "═",
-        "vertical": "║",
-    }),
-    7: RawStyle({
-        "top_right": "╖",
-        "top_left": "╓",
-        "bottom_right": "╜",
-        "bottom_left": "╙",
-        "horizontal": "─",
-        "vertical": "║",
-    }),
-    8: RawStyle({
-        "top_right": "╕",
-        "top_left": "╒",
-        "bottom_right": "╛",
-        "bottom_left": "╘",
-        "horizontal": "═",
-        "vertical": "│",
-    })
+    1: RawStyle(
+        {
+            "top_right": "+",
+            "top_left": "+",
+            "bottom_right": "+",
+            "bottom_left": "+",
+            "horizontal": "-",
+            "vertical": "|",
+        }
+    ),
+    2: RawStyle(
+        {
+            "top_right": "+",
+            "top_left": "+",
+            "bottom_right": "+",
+            "bottom_left": "+",
+            "horizontal": " ",
+            "vertical": " ",
+        }
+    ),
+    3: RawStyle(
+        {
+            "top_right": "┓",
+            "top_left": "┏",
+            "bottom_right": "┛",
+            "bottom_left": "┗",
+            "horizontal": "━",
+            "vertical": "┃",
+        }
+    ),
+    4: RawStyle(
+        {
+            "top_right": "╮",
+            "top_left": "╭",
+            "bottom_right": "╯",
+            "bottom_left": "╰",
+            "horizontal": "─",
+            "vertical": "│",
+        }
+    ),
+    5: RawStyle(
+        {
+            "top_right": "┐",
+            "top_left": "┌",
+            "bottom_right": "┘",
+            "bottom_left": "└",
+            "horizontal": "─",
+            "vertical": "│",
+        }
+    ),
+    6: RawStyle(
+        {
+            "top_right": "╗",
+            "top_left": "╔",
+            "bottom_right": "╝",
+            "bottom_left": "╚",
+            "horizontal": "═",
+            "vertical": "║",
+        }
+    ),
+    7: RawStyle(
+        {
+            "top_right": "╖",
+            "top_left": "╓",
+            "bottom_right": "╜",
+            "bottom_left": "╙",
+            "horizontal": "─",
+            "vertical": "║",
+        }
+    ),
+    8: RawStyle(
+        {
+            "top_right": "╕",
+            "top_left": "╒",
+            "bottom_right": "╛",
+            "bottom_left": "╘",
+            "horizontal": "═",
+            "vertical": "│",
+        }
+    ),
 }
 
 # alignments dictionary
 alignments = {
     1: "{sep}{sp}{ln}{os}{sp}{sep}",
     2: "{sep}{px}{ln}{os}{sp}{s}{sep}",
-    3: "{sep}{s}{sp}{os}{ln}{px}{sep}"
+    3: "{sep}{s}{sp}{os}{ln}{px}{sep}",
 }
 
 colours_list = {
@@ -110,5 +126,5 @@ colours_list = {
     5: colorama.Fore.CYAN,
     6: colorama.Fore.MAGENTA,
     7: colorama.Fore.YELLOW,
-    8: colorama.Fore.WHITE
+    8: colorama.Fore.WHITE,
 }
