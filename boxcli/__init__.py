@@ -24,5 +24,5 @@ __all__ = [
 
 __title__ = "boxcli"
 __author__ = "Anish Jewalikar"
-__version__ = "1.5.1"
+__version__ = "1.5.2"
 __license__ = "MIT"

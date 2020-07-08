@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "boxcli"
-version = "1.5.1"
+version = "1.5.2"
 description = "Create simple and beautiful boxes in the terminal."
 authors = ["Anish Jewalikar <anishjewalikar@gmail.com>"]
 maintainers = ["Anish Jewalikar <anishjewalikar@gmail.com>"]
@@ -19,6 +19,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
+wcwidth = "^0.2.5"
+colorama = "^0.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

@@ -58,9 +58,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "7.1.2"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Cross-platform colored terminal text."
-marker = "sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -213,7 +212,7 @@ python-versions = "*"
 version = "1.4.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Measures the displayed width of unicode strings in a terminal"
 name = "wcwidth"
 optional = false
@@ -221,7 +220,7 @@ python-versions = "*"
 version = "0.2.5"
 
 [metadata]
-content-hash = "2ceabf6cad0e03128b0a9dff69a872e352a597df3ce1d054da614648f6d8ae31"
+content-hash = "8c5b42c64c9631dcfc1c4b0c36edf0bf8baad8c7a7b247a0bb1c5a7a7133850a"
 python-versions = "^3.8"
 
 [metadata.files]

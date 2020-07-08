@@ -17,11 +17,9 @@ pretty neat right?
 
 ## Changelog
 
-### 1.5.1
+### 1.5.2
 
-1. Fixed a bug in the `update` method.
-
-2. Fixed a typo in the docs.
+1. Fix docs.
 
 ## Usage
 
