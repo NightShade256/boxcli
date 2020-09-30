@@ -1,11 +1,11 @@
 import enum
 from typing import List, Union
 
-from colorama import Fore
+from rich.console import Console
 from wcwidth import wcswidth
 
-from .errors import DifferentLengthError, TitleLengthError, TitlePositionError
-from .styles import RawStyle, alignments, colours_list, default_styles
+from .errors import TitleLengthError, TitlePositionError
+from .styles import RGB, RawStyle, alignments, colours_list, default_styles
 
 __all__ = ["BoxStyles", "ContentAlignment", "TitlePosition", "BoxFactory", "ColourEnum"]
 
@@ -24,6 +24,7 @@ def _longest_line(lines: List[str]) -> int:
         The length of the longest line."""
 
     longest = 0
+
     for line in lines:
         if wcswidth(line) > longest:
             longest = wcswidth(line)
@@ -168,24 +169,34 @@ class BoxFactory:
     title_pos : TitlePosition
         The position of the title with respect to the box.
         Defaults to TitlePosition.INSIDE
-    colour : ColourEnum
+    colour : Union[ColourEnum, RGB]
         The colour to be used to construct the box border.
-        Defaults to None.
+        Defaults to white colour.
     """
 
     def __init__(self, Px: int, Py: int, style: Union[BoxStyles, RawStyle], **kwargs):
         """The constructor nothing to explain here."""
         self.Px = Px
         self.Py = Py
+
         if isinstance(style, BoxStyles):
             self.style = default_styles.get(style.value)
         else:
             self.style = style
+
         self.alignment = kwargs.get("alignment", ContentAlignment.CENTRE)
         self.title_position = kwargs.get("title_pos", TitlePosition.INSIDE)
-        self.colour = kwargs.get("colour", None)
-        if self.colour is not None:
-            self.colour = colours_list.get(self.colour.value)
+
+        colour = kwargs.get("colour", ColourEnum.WHITE)
+
+        if isinstance(colour, ColourEnum):
+            self.colour = colours_list.get(colour.value)
+        elif isinstance(colour, RGB):
+            self.colour = colour.rgb
+        else:
+            self.colour = colours_list.get(ColourEnum.WHITE.value)
+
+        self.console = Console()
 
     def _add_vert_padding(self, length: int) -> list:
         """Returns a list of lines with vertical separators.
@@ -208,10 +219,12 @@ class BoxFactory:
         # end separators.
         padding = " " * (length - 2)
         lines = []
+
         if self.colour is not None:
-            sep = f"{self.colour}{self.style.vertical}{Fore.RESET}"
+            sep = f"[{self.colour}]{self.style.vertical}[/{self.colour}]"
         else:
             sep = self.style.vertical
+
         for _ in range(self.Py):
             lines.append(sep + padding + sep)
         return lines
@@ -238,7 +251,7 @@ class BoxFactory:
 
         count = n - wcswidth(s) - 2
         if self.colour is not None:
-            bar = f"{self.colour}{c * count}{Fore.RESET}"
+            bar = f"[{self.colour}]{c * count}[/{self.colour}]"
         else:
             bar = c * count
         return f" {s} {bar}"
@@ -276,6 +289,7 @@ class BoxFactory:
 
         # compute the longest line
         longest_line = _longest_line(content.splitlines())
+
         if self.title_position == TitlePosition.INSIDE:
             if wcswidth(title) > longest_line:
                 longest_line = wcswidth(title)
@@ -305,39 +319,36 @@ class BoxFactory:
         bottom_bar = self.style.bottom_left + bar + self.style.bottom_right
 
         if self.colour is not None:
-            top_bar = f"{self.colour}{top_bar}{Fore.RESET}"
-            bottom_bar = f"{self.colour}{bottom_bar}{Fore.RESET}"
+            top_bar = f"[{self.colour}]{top_bar}[/{self.colour}]"
+
+            bottom_bar = f"[{self.colour}]{bottom_bar}[{self.colour}]"
 
         # Update the bars if the position of the title is other than
         # that of inside the box.
         if self.title_position != TitlePosition.INSIDE:
             title_bar = self._repeat_with_string(self.style.horizontal, title, n - 2)
+
             if self.title_position == TitlePosition.TOP:
                 if self.colour is not None:
                     top_bar = (
-                        f"{self.colour}{self.style.top_left}{Fore.RESET}"
+                        f"[{self.colour}]{self.style.top_left}[/{self.colour}]"
                         + title_bar
-                        + f"{self.colour}{self.style.top_right}{Fore.RESET}"
+                        + f"[{self.colour}]{self.style.top_right}[/{self.colour}]"
                     )
                 else:
                     top_bar = self.style.top_left + title_bar + self.style.top_right
+
             elif self.title_position == TitlePosition.BOTTOM:
                 if self.colour is not None:
                     bottom_bar = (
-                        f"{self.colour}{self.style.bottom_left}{Fore.RESET}"
+                        f"[{self.colour}]{self.style.bottom_left}[/{self.colour}]"
                         + title_bar
-                        + f"{self.colour}{self.style.bottom_right}{Fore.RESET}"
+                        + f"[{self.colour}]{self.style.bottom_right}[/{self.colour}]"
                     )
                 else:
                     bottom_bar = (
                         self.style.bottom_left + title_bar + self.style.bottom_right
                     )
-
-        # Check if the length of the top and bottom bars match
-        # if the title is inside the box.
-        temp_cond = wcswidth(top_bar) != wcswidth(bottom_bar)
-        if self.title_position == TitlePosition.INSIDE and temp_cond:
-            raise DifferentLengthError()
 
         # texts is a list that will eventually
         # contain the rendered lines other than the top and bottom bars.
@@ -367,13 +378,18 @@ class BoxFactory:
 
             # 'Render' the line using the format function.
             if self.colour is not None:
-                sep = f"{self.colour}{self.style.vertical}{Fore.RESET}"
+                sep = f"[{self.colour}]{self.style.vertical}[/{self.colour}]"
             else:
                 sep = self.style.vertical
             spacing = str(space) + str(side_margin)
             fmt_string = alignments[self.alignment.value]
             box_string = fmt_string.format(
-                sep=sep, sp=spacing, ln=item, os=odd_space, s=space, px=side_margin,
+                sep=sep,
+                sp=spacing,
+                ln=item,
+                os=odd_space,
+                s=space,
+                px=side_margin,
             )
 
             # Add the line to our list of lines.
@@ -389,7 +405,10 @@ class BoxFactory:
         joint_lines = "\n".join(texts)
 
         # Finally after all that return the 'rendered' box.
-        return f"{top_bar}\n{joint_lines}\n{bottom_bar}\n"
+        with self.console.capture() as capture:
+            self.console.print(f"{top_bar}\n{joint_lines}\n{bottom_bar}\n")
+
+        return capture.get()
 
     def update(self, **kwargs) -> None:
         """Update the settings of the box factory.
@@ -406,18 +425,31 @@ class BoxFactory:
             The alignment of the content and title.
         title_pos : TitlePosition
             The position of the title relative to the box.
-        colour : ColourEnum
+        colour : Union[ColourEnum, RGB]
             The colour of the box border.
         """
+        if not kwargs:
+            return
+
         self.Px = kwargs.get("Px", self.Px)
         self.Py = kwargs.get("Py", self.Py)
+
         style_temp = kwargs.get("style", self.style)
+
         if isinstance(style_temp, BoxStyles):
             self.style = default_styles.get(style_temp.value)
         else:
             self.style = style_temp
+
         self.alignment = kwargs.get("alignment", self.alignment)
         self.title_position = kwargs.get("title_pos", self.title_position)
-        self.colour = kwargs.get("colour", self.colour)
-        if self.colour is not None:
-            self.colour = colours_list.get(self.colour.value)
+
+        if "colour" in kwargs:
+            colour = kwargs["colour"]
+
+            if isinstance(colour, ColourEnum):
+                self.colour = colours_list.get(colour.value)
+            elif isinstance(colour, RGB):
+                self.colour = colour.rgb
+            else:
+                self.colour = colours_list.get(ColourEnum.WHITE.value)

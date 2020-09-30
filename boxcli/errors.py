@@ -1,4 +1,4 @@
-__all__ = ["TitlePositionError", "TitleLengthError", "DifferentLengthError"]
+__all__ = ["TitlePositionError", "TitleLengthError"]
 
 
 class TitlePositionError(Exception):
@@ -9,11 +9,5 @@ class TitlePositionError(Exception):
 
 class TitleLengthError(Exception):
     """Raised when title length is larger than the top and bottom bars."""
-
-    pass
-
-
-class DifferentLengthError(Exception):
-    """Raised when the length of top bar is not equal to that of bottom bar."""
 
     pass

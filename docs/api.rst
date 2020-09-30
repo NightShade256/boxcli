@@ -24,15 +24,15 @@ Enumerations
 
 .. autoclass:: boxcli.TitlePosition
 
-Custom Styles
---------------
+Custom Styles and Colours
+-------------------------
 
 .. autoclass:: boxcli.RawStyle
 
+.. autoclass:: boxcli.RGB
+
 Exceptions
 -----------
-
-.. autoexception:: boxcli.DifferentLengthError
 
 .. autoexception:: boxcli.TitleLengthError
 

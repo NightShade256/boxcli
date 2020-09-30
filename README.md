@@ -1,7 +1,6 @@
 # boxcli
 
 [![Documentation Status](https://readthedocs.org/projects/boxcli/badge/?version=latest)](https://boxcli.readthedocs.io/en/latest/?badge=latest)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d3240b45af6d44c4821aa5b73f4b478b)](https://www.codacy.com/manual/anishjewalikar/boxcli?utm_source=github.com&utm_medium=referral&utm_content=NightShade256/boxcli&utm_campaign=Badge_Grade)
 
 Create simple and beautiful boxes in the terminal.
 
@@ -17,9 +16,13 @@ pretty neat right?
 
 ## Changelog
 
-### 1.5.2
+### 2.0.0
 
-1. Fix docs.
+1. Remove redudant exception from codebase, `DifferentLengthError`.
+
+2. Use `rich` for cross-platform colour support.
+
+3. Allow custom border colours with the `RGB` class.
 
 ## Usage
 
@@ -30,13 +33,19 @@ Here is an example:
 import boxcli
 
 # Create a box factory.
-factory = boxcli.BoxFactory(20, 5, boxcli.BoxStyles.ROUND)
+factory = boxcli.BoxFactory(
+    20,
+    5,
+    boxcli.BoxStyles.ROUND,
+    colour=boxcli.RGB((255, 255, 0)),
+)
 
 # Create a box.
 box = factory.get_box("This is the title of the box", "This is the content of the box")
 
 # Print it! as easy as that.
 print(box)
+
 ```
 
 With the 1.4.0 update of boxcli, you can now specify the colour of the box border too.
@@ -49,24 +58,11 @@ In-depth documentation can be found [here](http://boxcli.rtfd.io/).
 
 2. Custom box styles support.
 
-3. Colour support for box border.
+3. Colour (with option for custom RGB colours) support for box border.
 
 4. Support for non-latin alphabet characters.
 
 5. Specify title positions and content aligment according to your need.
-
-## Note
-
-### Colour Support on Windows
-
-This package cannot be directly used to colour box borders on Windows.
-You have to use this code snippet to turn on that functionality:
-
-```python
-import colorama
-
-colorama.init()
-```
 
 ## Contributing
 
