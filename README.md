@@ -76,8 +76,3 @@ This package is a port of the package [box-cli-maker](https://github.com/Delta45
 ## License
 
 boxcli is licensed under the MIT license.
-
-## Support
-
-Please feel free to contact me on Discord, if you have any query regarding boxcli.
-Username: `__NightShade256__#5169`
